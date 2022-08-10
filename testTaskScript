@@ -1,0 +1,16 @@
+with table_with_current_year as
+(
+	SELECT Вид_заявки, EXTRACT(YEAR FROM z.Дата_заявки) 
+	FROM Заявки as z
+	WHERE EXTRACT(YEAR FROM z.Дата_заявки)=(SELECT EXTRACT(YEAR FROM CURRENT_DATE))
+)
+SELECT Вид_заявки, count(Вид_заявки) as cnt
+FROM table_with_current_year
+GROUP BY Вид_заявки
+HAVING count(Вид_заявки)=
+	(SELECT max(f.cnt) 
+	 FROM (SELECT Вид_заявки, count(Вид_заявки) as cnt 
+		   FROM table_with_current_year
+	 	   GROUP BY Вид_заявки) as f)
+
+		 
